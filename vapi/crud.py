@@ -9,7 +9,6 @@ from dateutil.relativedelta import relativedelta
 from threading import Thread, Lock
 from dateutil.parser import parse
 from src.supabasedb import supabase
-from langchain_community.chat_models import ChatOpenAI
 
 load_dotenv()
 # openai_api_key = OPENAI_API_KEY
@@ -328,10 +327,10 @@ def check_status_of_calls(vapi: VAPI, call_id, phone_number, lock: Lock, file_pa
     print(Confidence)
     # Total_calls =
 
-    model = ChatOpenAI(api_key=openai_api_key,
-                       temperature=0.6,
-                       model="gpt-4o")
-    prompt = f"""You are a helpful assistant. Your job is read summary and write answer according to instructions.
+    # model = ChatOpenAI(api_key=openai_api_key,
+    #                    temperature=0.6,
+    #                    model="gpt-4o")
+    # prompt = f"""You are a helpful assistant. Your job is read summary and write answer according to instructions.
 
 ### Summary:
 {data["summary"]}   
@@ -348,33 +347,33 @@ No need to write anything else.
 ### Answer:
 
 """
-    # print("prompt: ", prompt)
-    answer = model.invoke(prompt)
-    # print("answer: ", answer)
+    # # print("prompt: ", prompt)
+    # answer = model.invoke(prompt)
+    # # print("answer: ", answer)
 
-    answers = model.invoke(prompt).content.strip()
-    if answers == "Wrong_Number":
-        status = "F"
-    elif answers == "Not_Intrested":
-        status = "NI"
-    elif answers == "Do_not_call":
-        status = "DNC"
-    elif answers == "Successful_sale":
-        status = "S"
-    else:
-        status = "C"
+    # answers = model.invoke(prompt).content.strip()
+    # if answers == "Wrong_Number":
+    #     status = "F"
+    # elif answers == "Not_Intrested":
+    #     status = "NI"
+    # elif answers == "Do_not_call":
+    #     status = "DNC"
+    # elif answers == "Successful_sale":
+    #     status = "S"
+    # else:
+    #     status = "C"
 
-        # status="NI"
-    if status == "NI":
-        Next_call_Date = Last_Date_called + relativedelta(months=2)
-    else:
-        Next_call_Date = ""
+    #     # status="NI"
+    # if status == "NI":
+    #     Next_call_Date = Last_Date_called + relativedelta(months=2)
+    # else:
+    #     Next_call_Date = ""
 
-    # status updation in csv
-    if file_path.split(".")[-1] == "csv":
-        datacsv = pd.read_csv(file_path)
-    else:
-        datacsv = pd.read_excel(file_path)
+    # # status updation in csv
+    # if file_path.split(".")[-1] == "csv":
+    #     datacsv = pd.read_csv(file_path)
+    # else:
+    #     datacsv = pd.read_excel(file_path)
 
     # print(phone_number)
     # print(data['customer']['phone'])
