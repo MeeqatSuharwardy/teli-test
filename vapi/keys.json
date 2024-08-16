@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "telibot",
+  "private_key_id": "a80ef032f48bc59e32afc7dd647f1cf066bb85f9",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCSP3p2J+p6Fdp0\nVLk7aTZRAzSppWbaoi4kYWlFkBirtpqvT0wn/At3L1MXYy8IevoLyAIWftE8xmm+\n8GZsOcMm03rGu6iL0s6FbUmyIwO3pwtt18KXpE7eYZldAXAH7b7o0jOTldo+vn13\nfogP9OqgrPIUVXU1kMRrlCMjqPVM0d0onPI+NoAXPGKlDoZRLJA8jCn8WZeM4M0U\nfA2ec3MZ1ajcEoIo9eM0rZdynpHwtt8KDtP4ITuhobFC4R0HGVuOCjwEKBhOyCAg\nKx7BtfnI/fX13nemXlFyd/va4k9G8lqpAvULKYWLFYT+CZGjhEtndyIJb3ofC7LP\nitzyqQxTAgMBAAECggEAAVbDcEF9TBDXJyl/aKPV83fsC4GQJ4BEm+CobhKbpzbM\nw74eHF+aW0T7pcMqsxEtKN5z5nDSyZOndDAPP/5nYvucrCUbrewIKACQJCld51iI\nKkFHbsv6TN7n4Ioa1HfAv7Ds9/TvQpPL4kQuSrcbTs1GihkeMZdZtQJuL+1kEYf2\nyk/6/AvaNVkQbAOVklqgnydOvMLjs7sCmIxDDfguJGaqcvHgnNdTWsmNat+miN0P\nqi72JVauabH7kHA5G7xPc2s5lcs/M8RF6cU9b9CoABx4YBf8Ez7Aq3JkIvN8vhM2\nug6cvh9e8OLhXZcwG019um0eVon3LHDh9J2RGh8FgQKBgQDLGzCEkH7EmCKUTvW0\nRKyw2DSStRjQiEoIo3ZMTAGgBmF4jb4LgU3mTBwX+HuElRg8AwOj+WRqgqozXRY+\nXLSNXmjdTdZIFtj6mv2QL3YKN5Z5Q76PZMHKH7lWCFxt2V55+kHQYI0GjremIoud\nXn1ChWuMllT2v0IhXc9ygmgYKQKBgQC4VaDIHtqcQ62H5yk16kf9WiHgorgL35d7\nPk9PuuC10IySmv2cv5NspZ8QXKr8EmfMT09QSy9FA33H9T5DYGbb9HZGYlaCIfir\neZe1X90HIkUlakqAem58JRC+2YKZFNmCRhOTSUhqZWcmViLG1WmU3WrUvhE/yZOj\nlBG5FAqAGwKBgADCYEMOmzq26uItDWQYIaEjncayoJ4e9E/l9IpCensTqwedWAmI\n+TaUMEKyrhuHxyhqRng1dXekd2hrv6qKBC7HHJM/OD7avwLo02vXkZRmMszPQQYe\nNU9BIRs+OsI6Xs0L73UM91n/7JXVaTo0YTl/cDB9W2H0wxWG2UCvVh5JAoGAEs2B\nOgiTqg7pO4yj0oEUWM6B2CUg+u0SyZqAgpSAaWtde3Ld3chY5GM8h3G8azwBZIDO\niVUx/CswAF6OvFawB023ZtSPGHUYpX0gsXqW1Cx1uyxNby+N55HsVFthi/XpffVh\n98so3Nl9HRb6Myf/vhSb2hmNLuGD8tKewC9AJvMCgYAJJ85Wc6tRbOD/jlYiCcQb\ns1C1J/C7T7zpA7Z78ogT9LqXI2FkJYJOmrER/jegOdSAppWrxSGinfU32myMUjJt\nR+DcOwLV1j3Cm2a1/kOdPaex0Vhsu+YJfE4GdHQLQ8qgzrdhXMh5TB4qQ8vLFe8r\n5jj/XZSmyZomp2IWp6JAgQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "telibotserviceacc@telibot.iam.gserviceaccount.com",
+  "client_id": "101899632547553445163",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/telibotserviceacc%40telibot.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

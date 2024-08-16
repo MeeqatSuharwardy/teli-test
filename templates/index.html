@@ -1,0 +1,272 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Campaign Dialer</title>
+    <style>
+        #dialerContainer {
+            display: flex;
+            align-items: center;
+        }
+        #campaignControls {
+            margin-left: 20px;
+        }
+        #headerContainer {
+            display: flex;
+            align-items: center;
+        }
+        #messages {
+            border: 1px solid #ddd;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Campaign Dialer</h1>
+    <form id="uploadForm">
+        <input name="file" type="file" id="uploadFile">
+        <button type="button" id="saveData">Upload CSV file</button>
+    </form>
+
+    <div id="headerContainer">
+        <h2>Dialer Status</h2>
+        <div id="campaignControls">
+            <button onclick="pauseCampaign()">Pause Campaign</button>
+            <button onclick="resumeCampaign()">Resume Campaign</button>
+            <button onclick="downloadCSV()">Download Updated CSV</button>
+        </div>
+    </div>
+
+    <div id="dialerContainer">
+        <div id="dialerStatus">
+            <p><strong>Index:</strong> <span id="dialerIndex">N/A</span></p>
+            <p><strong>Total:</strong> <span id="totalRows">N/A</span></p>
+            <p><strong>Name:</strong> <span id="dialerName">N/A</span></p>
+            <p><strong>Phone Number:</strong> <span id="phoneNumber">N/A</span></p>
+        </div>
+    </div>
+
+    <button onclick="fetchDialerStatus()">Get Dialer Status</button>
+        <!-- New section for displaying WebSocket messages -->
+    <div id="messages">
+        <!-- WebSocket messages will be displayed here -->
+    </div>
+
+    <script>
+        let socket;
+        function showAlert(message) {
+            alert(message);
+        }
+
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        function pauseCampaign() {
+            const campaignID = getUrlParameter('CampaignID');
+            if (!campaignID) {
+                showAlert('Campaign ID is required');
+                return;
+            }
+            // Closing the connection in case of campaign paused
+
+            if (socket) {
+                socket.close();
+                socket = null;
+            }
+
+            fetch(`/vapi/pausecampaign/?campaign_id=${campaignID}`, {
+                method: 'GET',
+            }).then((res) => {
+                if (res.status === 200) {
+                    showAlert('Campaign paused successfully');
+                } else {
+                    res.json().then((data) => {
+                        showAlert(data.details);
+                    });
+                }
+            }).catch((err) => {
+                showAlert('Failed to pause campaign');
+            });
+        }
+
+        function resumeCampaign() {
+            const campaignID = getUrlParameter('CampaignID');
+            if (!campaignID) {
+                showAlert('Campaign ID is required');
+                return;
+            }
+            // Re-establish WebSocket connection if status button was clicked
+            if (socket) {
+                socket.close();
+                socket = null;
+            }
+
+            fetch(`/vapi/resumecampaign/?campaign_id=${campaignID}`, {
+                method: 'GET',
+            }).then((res) => {
+                if (res.status === 200) {
+                    showAlert('Campaign resumed successfully');
+                } else {
+                    res.json().then((data) => {
+                        showAlert(data.details);
+                    });
+                }
+            }).catch((err) => {
+                showAlert('Failed to resume campaign');
+            });
+        }
+
+        $(document).ready(function () {
+            $('#saveData').click(function () {
+                const clientID = getUrlParameter('ClientID');
+                const campaignID = getUrlParameter('CampaignID');
+                const file = $('#uploadFile')[0].files[0];
+
+                if (!clientID) {
+                    showAlert('Client ID is required');
+                    return;
+                }
+                if (!campaignID) {
+                    showAlert('Campaign ID is required');
+                    return;
+                }
+                if (!file) {
+                    showAlert('File is required');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('ClientID', clientID);
+                formData.append('CampaignID', campaignID);
+                formData.append('file', file);
+
+                $.ajax({
+                    url: '/vapi/uploadfile/',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        showAlert('File uploaded successfully');
+                    },
+                    error: function (response) {
+                        showAlert('File upload failed: ' + response.responseText);
+                    }
+                });
+            });
+        });
+
+        function fetchDialerStatus() {
+            // Close existing WebSocket connection if it exists
+            if (typeof socket !== 'undefined' && socket) {
+                socket.close();
+                socket = null;
+            }
+            const campaignID = getUrlParameter('CampaignID');
+            const clientID = getUrlParameter('ClientID');
+
+            if (!campaignID || !clientID) {
+                showAlert('Campaign ID and Client ID are required');
+                return;
+            }
+            try {
+                socket = new WebSocket(`wss://${window.location.host}/vapi/ws/get_dialer_index`);
+            } catch (e) {
+                console.log("WebSocket connection error:", e);
+                return;
+            }
+
+            socket.onopen = () => {
+                socket.send(JSON.stringify({ campaign_id: campaignID, client_id: clientID }));
+            };
+
+            socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+
+                if (data.error) {
+                    showAlert(data.error);
+                } else {
+                    document.getElementById('dialerIndex').innerText = data.index;
+                    document.getElementById('totalRows').innerText = data.total;
+                    document.getElementById('dialerName').innerText = data.Name;
+                    document.getElementById('phoneNumber').innerText = data.phone_number;
+                }
+            };
+
+            socket.onerror = (error) => {
+                showAlert('WebSocket error: ' + error.message);
+            };
+
+            socket.onclose = () => {
+                console.log('WebSocket connection closed');
+            };
+        }
+    //    function to download the csv file passing the campaign_id and client_id
+        function downloadCSV() {
+            const campaignID = getUrlParameter('CampaignID');
+            const clientID = getUrlParameter('ClientID');
+            if (!campaignID || !clientID) {
+                showAlert('Campaign ID and Client ID are required');
+                return;
+            }
+
+            const url = `/vapi/download_updated_csv/?client_id=${clientID}&campaign_id=${campaignID}`;
+            window.open(url, '_blank');
+        }
+
+
+
+        // New function to handle WebSocket for error messages
+        function fetchErrorMessages() {
+            if (socket) {
+                socket.close();
+                socket = null;
+            }
+            try {
+                socket = new WebSocket(`ws://${window.location.host}/vapi/ws/get_prev_call_status`);
+            } catch (e) {
+                console.log("WebSocket connection error:", e);
+                return;
+            }
+
+            socket.onopen = () => {
+                console.log("WebSocket connection for error messages established.");
+            };
+
+            socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+
+                const messagesDiv = document.getElementById('messages');
+                messagesDiv.textContent = ""; // Clear previous messages
+                if (data.message) {
+                    messagesDiv.textContent = data.message;
+                } else if (data.error) {
+                    messagesDiv.textContent = `Error: ${data.error}`;
+                }
+            };
+
+            socket.onerror = (error) => {
+                console.error('WebSocket error:', error.message);
+            };
+
+            socket.onclose = () => {
+                console.log('WebSocket connection for error messages closed');
+            };
+        }
+
+        // Call fetchErrorMessages to start receiving error messages
+        fetchErrorMessages();
+
+
+    </script>
+</body>
+</html>
